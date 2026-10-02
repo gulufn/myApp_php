@@ -11,5 +11,10 @@ $router->define([
     '/user/verify_token' => 'controllers/user/verify_token.php',
     '/user/login' => 'controllers/user/login_by_pwd.php',
     '/user/login_by_email' => 'controllers/user/login_by_email.php',
+
+    '/music/get_music_list' => 'controllers/music/get_music_list.php',
+    '/music/toggle_favorites' => 'controllers/music/toggle_favorites_music.php',
+    '/music/search_music' => 'controllers/music/search_music.php',
+
     '/test' => '/test.php',
 ]);

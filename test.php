@@ -13,27 +13,49 @@ $db = new Db;
 use Core\Utils;
 $utils = new Utils;
 
-
+$redis = new Redis();
+$redis->connect('127.0.0.1', 6379);
+$redis->select(2);   //注册页面保存图片验证码使用第一个redis库
 
 //判断是否是get请求
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    $csvPath = BASE_PATH.'/assets/music/music_list.csv';
-    $fh = fopen($csvPath, 'r');
-    if (!$fh) {
-        die("打不开 CSV 文件");
-    }
-    // 跳过表头
-    fgetcsv($fh);
-    $data=['name'=>'','title'=>'','artist'=>''];
-    while (($row = fgetcsv($fh)) !== false) {
-        $data['name']  = $row[0];
-        $data['title'] = $row[1];
-        $data['artist'] = $row[2];
-        // $db->insert_data_music($pdo,$data);
-        $data=['name'=>'','title'=>'','artist'=>''];
-    }
-    fclose($fh);
+    // $r=$db->select_all_music($pdo,['id']);
+    // $ids = array_column($r['data']['data'], 'id');
+    // shuffle($ids);
+    // $redis->setex('music', 60000, json_encode($ids));
+
+    // $data=$redis->get('music');
+    // $cached = json_decode($redis->get('music'), true);
+    // var_dump($cached);
+
+
+    $r=$db->select_data_by_title_music($pdo,'清',['id','name','title','artist']);
+    var_dump($r);
+
+
+
+    // $csvPath = BASE_PATH.'/assets/music/music_list.csv';
+    // $fh = fopen($csvPath, 'r');
+    // if (!$fh) {
+    //     die("打不开 CSV 文件");
+    // }
+    // // 跳过表头
+    // fgetcsv($fh);
+    // $data=['name'=>'','title'=>'','artist'=>''];
+    // while (($row = fgetcsv($fh)) !== false) {
+    //     $data['name']  = $row[0];
+    //     $data['title'] = $row[1];
+    //     $data['artist'] = $row[2];
+    //     // $db->insert_data_music($pdo,$data);
+    //     $data=['name'=>'','title'=>'','artist'=>''];
+    // }
+    // fclose($fh);
+
+
+
+
+
 
     // var_dump();
 

@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
     $seconds = time() - strtotime($r['data']['token_update_time']);
-    if($seconds > 3600){
+    if($seconds > 60*60*24){
         $response = array('status' => 0,'message' =>'token已过期，请重新登录');
         echo json_encode($response);    
         exit();
