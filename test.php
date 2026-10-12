@@ -15,23 +15,25 @@ $utils = new Utils;
 
 $redis = new Redis();
 $redis->connect('127.0.0.1', 6379);
-$redis->select(2);   //注册页面保存图片验证码使用第一个redis库
+$redis->select(2);
 
 //判断是否是get请求
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    // $r=$db->select_all_music($pdo,['id']);
-    // $ids = array_column($r['data']['data'], 'id');
-    // shuffle($ids);
-    // $redis->setex('music', 60000, json_encode($ids));
+    $r=$db->select_all_music($pdo,['id']);
+    $ids = array_column($r['data']['data'], 'id');
+    shuffle($ids);
+    $redis->setex('music', 60000, json_encode($ids));
+
+    // echo time();
 
     // $data=$redis->get('music');
     // $cached = json_decode($redis->get('music'), true);
     // var_dump($cached);
 
 
-    $r=$db->select_data_by_title_music($pdo,'清',['id','name','title','artist']);
-    var_dump($r);
+    // $r=$db->select_data_by_title_music($pdo,'清',['id','name','title','artist']);
+    // var_dump($r);
 
 
 
