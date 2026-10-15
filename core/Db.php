@@ -4,6 +4,7 @@ namespace Core;
 
 class Db
 {
+    ////////////////////////////////////////////////////users表
     /**
      * 插入一条用户数据
      *
@@ -450,6 +451,167 @@ class Db
         } catch (\PDOException $e) {
             $rdata = ['sql' => $sql, 'error' => $e->getMessage(), 'sqlstate' => $e->getCode()];
             return ['code' => '0', 'msg' => 'sql执行失败', 'data' => $rdata];
+        }
+    }
+
+    //////////////////////////////////////////////////video表
+    /**
+     * 插入一条video数据
+     *
+     * @param  \PDO  $pdo
+     * @param  array $data 数据类型为关联数组 字段名 => 值，如 ['name' => 'sdafdfdfdfasffdfsff', 'title' => '流浪地球']
+     * @return array $rdata
+     */
+    public static function insert_data_video(\PDO $pdo,array $data = []): array{
+        // 允许插入的字段白名单
+        $allowed = ['id','name', 'title', 'form', 'status'];
+        try {
+            // 过滤掉不在白名单里的字段,array_flip()让数组变成关联数组，array_intersect_key(),取两个数组中的交集，以第一个为主
+            $data = array_intersect_key($data, array_flip($allowed));
+            if (empty($data)) {return ['code' => '0', 'msg' => '没有可插入的字段', 'data' => ''];}
+            // ['name', 'title']，取$data里的key
+            $cols = array_keys($data);                    
+            // [':name', ':title']，把'key'变成':key'
+            $placeholders = array_map(fn($c) => ":{$c}", $cols);  
+            //开始拼接sql
+            $sql = "INSERT INTO video (" . implode(',', $cols) . ") VALUES (" . implode(',', $placeholders) . ")";
+            //预处理
+            $statement = $pdo->prepare($sql);
+            //循环给sql绑定值
+            foreach ($data as $col => $val) {
+                $statement->bindValue(":{$col}", $val);
+            }
+            //执行sql
+            $statement->execute();
+            $rdata=['sql'=>$sql,'params'=>$data];
+            return ['code'=>'1','msg'=>'成功','data'=>$rdata];
+        }catch (\PDOException $e) {
+            $rdata=['sql'=>$sql,'error'=>$e->getMessage(),'sqlstate'=>$e->getCode(),'params'=>$fields];
+            return ['code'=>'0','msg'=>'sql执行失败','data'=>$rdata];
+        }
+    }
+    /**
+     * 查询通过id查询数据
+     *
+     * @param  \PDO   $pdo
+     * @param  string $id  
+     * @param  array  $fields ['id','name',......]
+     * @return array  $rdata  
+     */
+    public static function select_data_by_id_video(\PDO $pdo,string $id, array $fields = []): array{
+        // 白名单，防止 SQL 注入
+        $allowed = ['id','name', 'title', 'form', 'status'];
+        try {
+            //取两个数组的交集
+            $fields = array_intersect($fields, $allowed);
+            //如果传入的数组是空数组，则return
+            if (empty($fields)) {return ['code'=>'0','msg'=>'没有合法字段','data'=>''];}
+            //把$fields数组里的元素用逗号连接
+            $cols = implode(',', $fields);
+            $sql = "SELECT {$cols} FROM video WHERE id = :id";
+            //预处理
+            $statement = $pdo->prepare($sql);
+            //绑定值
+            $statement->bindValue(':id', $id);
+            //执行sql
+            $statement->execute();
+            $row = $statement->fetch();
+            return ['code'=>'1','msg'=>'成功','data'=>$row === false ? false : $row];
+        }catch (\PDOException $e) {
+            $rdata=['sql'=>$sql,'error'=>$e->getMessage(),'sqlstate'=>$e->getCode(),'params'=>$fields];
+            return ['code'=>'0','msg'=>'sql执行失败','data'=>$rdata];
+        }
+    }
+    /**
+     * 查询所有 video 数据
+     *
+     * @param  \PDO   $pdo
+     * @param  array  $fields  需要查询的字段 ['id','title','name',...]
+     * @return array  $rdata
+     */
+    public static function select_all_video(\PDO $pdo,$fields = []): array {
+        // 白名单，防止 SQL 注入
+        $allowed = ['id','name', 'title', 'form', 'status'];
+        try {
+            // 取两个数组的交集
+            $fields = array_intersect($fields, $allowed);
+            // 如果传入的数组是空数组，则 return
+            if (empty($fields)) {return ['code' => '0', 'msg' => '没有合法字段', 'data' => ''];}
+
+            // 把 $fields 数组里的元素用逗号连接
+            $cols = implode(',', $fields);
+            $sql = "SELECT {$cols} FROM video";
+            // 预处理
+            $statement = $pdo->prepare($sql);
+            // 执行 sql
+            $statement->execute();
+            $rows = $statement->fetchAll();
+
+            $rdata = ['sql' => $sql, 'data' =>$rows];
+            return ['code' => '1', 'msg' => 'sql执行成功', 'data' => $rdata];
+        } catch (\PDOException $e) {
+            $rdata = ['sql' => $sql, 'error' => $e->getMessage(), 'sqlstate' => $e->getCode()];
+            return ['code' => '0', 'msg' => 'sql执行失败', 'data' => $rdata];
+        }
+    }
+    /**
+     * 通过id更新数据
+     *
+     * @param  \PDO   $pdo
+     * @param  string $id
+     * @param  array  $data   数据类型为关联数组 字段名 => 值，如 ['id' => '6666', 'name' => 'xxx']
+     * @return array  $rdata  
+     */
+    public static function update_data_video(\PDO $pdo,string $id,array $data = []): array{
+        // 允许插入的字段白名单
+        $allowed = ['id','name', 'title', 'form', 'status'];
+        try {
+            // 过滤掉不在白名单里的字段
+            $data = array_intersect_key($data, array_flip($allowed));
+            if (empty($data)) {return ['code' => '0', 'msg' => '没有可更新的字段', 'data' => ''];}
+            $set = [];
+            $params = [];
+            foreach ($data as $col => $val) {
+                $ph = ":{$col}";
+                $set[] = "{$col} = {$ph}";
+                $params[$ph] = $val;
+            }
+            $sql="UPDATE video SET ". implode(',', $set) . " WHERE id = :id";
+            $statement = $pdo->prepare($sql);
+            foreach ($data as $col => $val) {
+                $statement->bindValue(":{$col}", $val);
+            }
+            $statement->bindParam(":id", $id);
+            $statement->execute();
+            $rdata=['sql'=>$sql,'params'=>$data,'stmt'=>$statement->rowCount()];
+            return ['code'=>'1','msg'=>'成功','data'=>$rdata];
+        }catch (\PDOException $e) {
+            $rdata=['sql'=>$sql,'error'=>$e->getMessage(),'sqlstate'=>$e->getCode(),'params'=>$fields];
+            return ['code'=>'0','msg'=>'sql执行失败','data'=>$rdata];
+        }
+    }
+
+    /**
+     * 查询通过id删除数据
+     *
+     * @param  \PDO   $pdo
+     * @param  string $id
+     * @return array  $rdata
+     */
+    public static function delete_data_by_id_video(\PDO $pdo,string $id): array{
+        try {
+            $sql = "DELETE FROM video WHERE id = :id";
+            //预处理
+            $statement = $pdo->prepare($sql);
+            //绑定值
+            $statement->bindValue(':id', $id);
+            //执行sql
+            $statement->execute();
+            $rows = $statement->rowCount();
+            return ['code'=>'1','msg'=>'成功','data'=>$rows];
+        }catch (\PDOException $e) {
+            $rdata=['sql'=>$sql,'error'=>$e->getMessage(),'sqlstate'=>$e->getCode()];
+            return ['code'=>'0','msg'=>'sql执行失败','data'=>$rdata];
         }
     }
 

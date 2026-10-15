@@ -20,23 +20,45 @@ $redis->select(2);
 //判断是否是get请求
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    $r=$db->select_all_music($pdo,['id']);
-    $ids = array_column($r['data']['data'], 'id');
-    shuffle($ids);
-    $redis->setex('music', 60000, json_encode($ids));
-
-    // echo time();
-
-    // $data=$redis->get('music');
-    // $cached = json_decode($redis->get('music'), true);
-    // var_dump($cached);
-
-
-    // $r=$db->select_data_by_title_music($pdo,'清',['id','name','title','artist']);
+    // $r=$db->update_data_video($pdo,'9',['title' => '流浪月球']);
     // var_dump($r);
 
 
+    ////################################把音乐id打乱顺序存入redis
+    // $r=$db->select_all_video($pdo,['id']);
+    // $ids = array_column($r['data']['data'], 'id');
+    // shuffle($ids);
+    // $redis->setex('video', 60000, json_encode($ids));    //每天更新音乐列表
+    ////##########################################################
 
+    ////################################把音乐id打乱顺序存入redis
+    // $r=$db->select_all_music($pdo,['id']);
+    // $ids = array_column($r['data']['data'], 'id');
+    // shuffle($ids);
+    // $redis->setex('music', 60000, json_encode($ids));    //每天更新音乐列表
+    ////##########################################################
+
+    ////################################导入视频数据到数据库
+    // $csvPath = BASE_PATH.'/assets/video/output5.csv';
+    // $fh = fopen($csvPath, 'r');
+    // if (!$fh) {
+    //     die("打不开 CSV 文件");
+    // }
+    // // 跳过表头
+    // fgetcsv($fh);
+    // $data=['name'=>'','title'=>''];
+    // while (($row = fgetcsv($fh)) !== false) {
+    //     $data['name']  = $row[0];
+    //     $data['title'] = $row[1];
+    //     $data['form'] = "tvshows";
+    //     // var_dump($data);
+    //     // $db->insert_data_video($pdo,$data);
+    //     $data=['name'=>'','title'=>'','form'=>''];
+    // }
+    // fclose($fh);
+    ////##################################################################
+
+    ////##################################################导入音乐数据到数据库
     // $csvPath = BASE_PATH.'/assets/music/music_list.csv';
     // $fh = fopen($csvPath, 'r');
     // if (!$fh) {
@@ -53,16 +75,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     //     $data=['name'=>'','title'=>'','artist'=>''];
     // }
     // fclose($fh);
+    ////###################################################################
 
-
-
-
-
-
-    // var_dump();
-
-    // $response = array('status' => 'ok','message' => 'get',);
-    // echo json_encode($response);
+    $response = array('status' => 'ok','message' => 'get',);
+    echo json_encode($response);
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $json=file_get_contents('php://input');

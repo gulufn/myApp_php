@@ -112,8 +112,9 @@ class Utils
         }
         $is_favorite=$post_json['is_favorite'] ?? null;
         $music_id=$post_json['music_id'] ?? null;
+        $video_id=$post_json['video_id'] ?? null;
         $title=$post_json['keyword'] ?? '';
-        return array('status' => 1, 'message' => $token, 'index' => $index, 'is_favorite' => $is_favorite, 'music_id' => $music_id,'title'=>$title);
+        return array('status' => 1, 'message' => $token, 'index' => $index, 'is_favorite' => $is_favorite, 'music_id' => $music_id,'title'=>$title,'video_id'=>$video_id);
     }
 
 }
