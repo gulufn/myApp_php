@@ -20,16 +20,18 @@ $redis->select(2);
 //判断是否是get请求
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-    // $r=$db->update_data_video($pdo,'9',['title' => '流浪月球']);
-    // var_dump($r);
+    // $r=$db->insert_data_userVideoFavorites($pdo,46,15);
+    // $r=$db->select_data_by_userid_videoid_userVideoFavorites($pdo,46,16);
+    $r=$db->delete_data_userVideoFavorites($pdo,46,15);
+    var_dump($r);
 
 
-    ////################################把音乐id打乱顺序存入redis
+    // //################################把视频id打乱顺序存入redis
     // $r=$db->select_all_video($pdo,['id']);
     // $ids = array_column($r['data']['data'], 'id');
     // shuffle($ids);
     // $redis->setex('video', 60000, json_encode($ids));    //每天更新音乐列表
-    ////##########################################################
+    // //##########################################################
 
     ////################################把音乐id打乱顺序存入redis
     // $r=$db->select_all_music($pdo,['id']);
@@ -38,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // $redis->setex('music', 60000, json_encode($ids));    //每天更新音乐列表
     ////##########################################################
 
-    ////################################导入视频数据到数据库
-    // $csvPath = BASE_PATH.'/assets/video/output5.csv';
+    // //################################导入视频数据到数据库
+    // $csvPath = BASE_PATH.'/assets/video/output6.csv';
     // $fh = fopen($csvPath, 'r');
     // if (!$fh) {
     //     die("打不开 CSV 文件");
@@ -50,15 +52,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // while (($row = fgetcsv($fh)) !== false) {
     //     $data['name']  = $row[0];
     //     $data['title'] = $row[1];
-    //     $data['form'] = "tvshows";
-    //     // var_dump($data);
-    //     // $db->insert_data_video($pdo,$data);
+    //     $data['form'] = "movies";
+    //     var_dump($data);
+    //     $db->insert_data_video($pdo,$data);
     //     $data=['name'=>'','title'=>'','form'=>''];
     // }
     // fclose($fh);
-    ////##################################################################
+    // //##################################################################
 
-    ////##################################################导入音乐数据到数据库
+    // //##################################################导入音乐数据到数据库
     // $csvPath = BASE_PATH.'/assets/music/music_list.csv';
     // $fh = fopen($csvPath, 'r');
     // if (!$fh) {
@@ -75,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     //     $data=['name'=>'','title'=>'','artist'=>''];
     // }
     // fclose($fh);
-    ////###################################################################
+    // //###################################################################
 
     $response = array('status' => 'ok','message' => 'get',);
     echo json_encode($response);

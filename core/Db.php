@@ -615,5 +615,90 @@ class Db
         }
     }
 
+
+
+    ///////////////////////////////////////////////////////////user_video_favorites表
+
+    /**
+     * 判断用户是否收藏了某个视频
+     *
+     * @param  \PDO   $pdo
+     * @param  int    $user_id
+     * @param  int    $music_id
+     * @return array  $rdata
+     */
+    public static function select_data_by_userid_videoid_userVideoFavorites(\PDO $pdo,$user_id,$video_id): array {
+        try {
+            $sql = "SELECT 1 FROM user_video_favorites WHERE user_id = :user_id AND video_id = :video_id LIMIT 1";
+            // 预处理
+            $statement = $pdo->prepare($sql);
+            // 绑定值
+            $statement->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+            $statement->bindValue(':video_id', $video_id, \PDO::PARAM_INT);
+            // 执行 sql
+            $statement->execute();
+            $rows = $statement->fetch() !== false;
+
+            $rdata = ['sql' => $sql, 'data' =>$rows];
+            return ['code' => '1', 'msg' => 'sql执行成功', 'data' => $rdata];
+        } catch (\PDOException $e) {
+            $rdata = ['sql' => $sql, 'error' => $e->getMessage(), 'sqlstate' => $e->getCode()];
+            return ['code' => '0', 'msg' => 'sql执行失败', 'data' => $rdata];
+        }
+    }
+
+    /**
+     * 用户收藏某个视频
+     *
+     * @param  \PDO   $pdo
+     * @param  int    $user_id
+     * @param  int    $music_id
+     * @return array  $rdata
+     */
+    public static function insert_data_userVideoFavorites(\PDO $pdo,$user_id,$video_id): array {
+        try {
+            $sql = "insert into user_video_favorites(user_id, video_id)VALUES(:user_id, :video_id)";
+            // 预处理
+            $statement = $pdo->prepare($sql);
+            // 绑定值
+            $statement->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+            $statement->bindValue(':video_id', $video_id, \PDO::PARAM_INT);
+            // 执行 sql
+            $statement->execute();
+
+            $rdata = ['sql' => $sql];
+            return ['code' => '1', 'msg' => 'sql执行成功', 'data' => $rdata];
+        } catch (\PDOException $e) {
+            $rdata = ['sql' => $sql, 'error' => $e->getMessage(), 'sqlstate' => $e->getCode()];
+            return ['code' => '0', 'msg' => 'sql执行失败', 'data' => $rdata];
+        }
+    }
+
+    /**
+     * 用户取消收藏了某个视频
+     *
+     * @param  \PDO   $pdo
+     * @param  int    $user_id
+     * @param  int    $music_id
+     * @return array  $rdata
+     */
+    public static function delete_data_userVideoFavorites(\PDO $pdo,$user_id,$video_id): array {
+        try {
+            $sql = "DELETE FROM user_video_favorites WHERE user_id = :user_id AND video_id = :video_id";
+            // 预处理
+            $statement = $pdo->prepare($sql);
+            // 绑定值
+            $statement->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+            $statement->bindValue(':video_id', $video_id, \PDO::PARAM_INT);
+            // 执行 sql
+            $statement->execute();
+            $rows = $statement->rowCount();
+            $rdata = ['sql' => $sql,'$rows'=>$rows];
+            return ['code' => '1', 'msg' => 'sql执行成功', 'data' => $rdata];
+        } catch (\PDOException $e) {
+            $rdata = ['sql' => $sql, 'error' => $e->getMessage(), 'sqlstate' => $e->getCode()];
+            return ['code' => '0', 'msg' => 'sql执行失败', 'data' => $rdata];
+        }
+    }
 }
 

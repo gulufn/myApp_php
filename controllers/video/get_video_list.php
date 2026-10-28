@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $ids=json_decode($redis->get('video'), true);
     if($index >= count($ids)){
-        $index=random_int(0, count($ids)-3);
+        $index=random_int(0, count($ids)-12);
     }
     if($ids === null){
         $response = array('status' => 0,'message' =>'redis中没有video的id数据');
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $video_list_ids=array_slice($ids,$index,3);
+    $video_list_ids=array_slice($ids,$index,12);
     $video=[];
     for($i=0;$i<count($video_list_ids);$i++){
         $r=$db->select_data_by_id_video($pdo,$video_list_ids[$i],['id','name','title','form']);
@@ -70,6 +70,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode($response);    //数据库查询失败
             exit();
         }
+
+        $video_id=$r['data']['id'];
+        $is_favorite=$db->select_data_by_userid_videoid_userVideoFavorites($pdo,$user_id,$video_id);
+        $r['data']['is_favorite']=$is_favorite['data']['data'];
         $video[$i]=$r['data'];
     }
     $key = $crypto->encrypt((string)time());
