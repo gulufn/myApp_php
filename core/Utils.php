@@ -65,7 +65,7 @@ class Utils
     //验证密码是否合法
     public static function judge_pwd(string $pwd){
         if($pwd === null || !is_string($pwd) || trim($pwd) === '' || mb_strlen($pwd) >32 || mb_strlen($pwd) < 6){
-            $response=array('status' => 0, 'message' => '密码不能为空或密码长度不合法');
+            $response=array('status' => 0, 'message' => '密码不能为空或密码长度小于6不合法');
             return $response;
         }
         $response=array('status' => 1, 'message' => $pwd);
@@ -115,7 +115,11 @@ class Utils
         $music_id=$post_json['music_id'] ?? null;
         $video_id=$post_json['video_id'] ?? null;
         $title=$post_json['keyword'] ?? '';
-        return array('status' => 1, 'message' => $token, 'index' => $index, 'youbiao'=>$youbiao,'is_favorite' => $is_favorite, 'music_id' => $music_id,'title'=>$title,'video_id'=>$video_id);
+        $old_pwd=$post_json['pwd'] ?? null;
+        $new_pwd=$post_json['new_pwd'] ?? null;
+        $captcha_email=$post_json['captcha_email'] ?? null;
+
+        return array('status' => 1, 'message' => $token,'captcha_email'=>$captcha_email,'old_pwd'=>$old_pwd,'new_pwd'=>$new_pwd, 'index' => $index, 'youbiao'=>$youbiao,'is_favorite' => $is_favorite, 'music_id' => $music_id,'title'=>$title,'video_id'=>$video_id);
     }
 
 }
