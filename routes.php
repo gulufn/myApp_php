@@ -15,8 +15,11 @@ $router->define([
     '/music/get_music_list' => 'controllers/music/get_music_list.php',
     '/music/toggle_favorites' => 'controllers/music/toggle_favorites_music.php',
     '/music/search_music' => 'controllers/music/search_music.php',
+    '/music/music_collect' => 'controllers/music/get_music_collect_list.php',
+    
     '/video/get_video_list' => 'controllers/video/get_video_list.php',
     '/video/toggle_favorites' => 'controllers/video/toggle_favorites_video.php',
+    '/video/search_video' => 'controllers/video/search_video.php',
 
     
     '/test' => '/test.php',

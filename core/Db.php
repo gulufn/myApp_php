@@ -372,6 +372,60 @@ class Db
     ///////////////////////////////////////////////////////////user_music_favorites表
 
     /**
+     * 查询用户收藏的音乐，按时间倒序，取前x个
+     *
+     * @param  \PDO   $pdo
+     * @param  int    $user_id
+     * @return array  $rdata
+     */
+    public static function select_data_by_userid_userMusicFavorites(\PDO $pdo,$user_id): array {
+        try {
+            $sql = "SELECT id,music_id,created_at FROM user_music_favorites WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 15";
+            // 预处理
+            $statement = $pdo->prepare($sql);
+            // 绑定值
+            $statement->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+            // 执行 sql
+            $statement->execute();
+            $rows = $statement->fetchall();
+
+            // $rdata = ['sql' => $sql, 'data' =>$rows];
+            return ['code' => '1', 'msg' => 'sql执行成功', 'data' => $rows];
+        } catch (\PDOException $e) {
+            $rdata = ['sql' => $sql, 'error' => $e->getMessage(), 'sqlstate' => $e->getCode()];
+            return ['code' => '0', 'msg' => 'sql执行失败', 'data' => $rdata];
+        }
+    }
+    /**
+     * 通过userid和游标 查询用户收藏的音乐，按时间倒序，取前x个
+     *
+     * @param  \PDO   $pdo
+     * @param  int    $user_id
+     * @param  string $youbiao
+     * @return array  $rdata
+     */
+    public static function select_data_by_userid_youbiao_userMusicFavorites(\PDO $pdo,$user_id,$youbiao): array {
+        try {
+            $sql = "SELECT id,music_id,created_at FROM user_music_favorites WHERE user_id = :user_id  AND created_at < :youbiao ORDER BY created_at DESC LIMIT 10";
+            // 预处理
+            $statement = $pdo->prepare($sql);
+            // 绑定值
+            $statement->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+            $statement->bindValue(':youbiao', $youbiao, \PDO::PARAM_STR);
+            // 执行 sql
+            $statement->execute();
+            $rows = $statement->fetchall();
+
+            $rdata = ['sql' => $sql, 'data' =>$rows];
+            return ['code' => '1', 'msg' => 'sql执行成功', 'data' => $rdata];
+        } catch (\PDOException $e) {
+            $rdata = ['sql' => $sql, 'error' => $e->getMessage(), 'sqlstate' => $e->getCode()];
+            return ['code' => '0', 'msg' => 'sql执行失败', 'data' => $rdata];
+        }
+    }
+
+
+    /**
      * 判断用户是否收藏了某个音乐
      *
      * @param  \PDO   $pdo
@@ -611,6 +665,38 @@ class Db
             return ['code'=>'1','msg'=>'成功','data'=>$rows];
         }catch (\PDOException $e) {
             $rdata=['sql'=>$sql,'error'=>$e->getMessage(),'sqlstate'=>$e->getCode()];
+            return ['code'=>'0','msg'=>'sql执行失败','data'=>$rdata];
+        }
+    }
+        /**
+     * 查询通过title查询数据
+     *
+     * @param  \PDO   $pdo
+     * @param  string $title  
+     * @param  array  $fields ['id','name',......]
+     * @return array  $rdata  
+     */
+    public static function select_data_by_title_video(\PDO $pdo,string $title, array $fields = []): array{
+        // 白名单，防止 SQL 注入
+        $allowed = ['id','name', 'title', 'form', 'status'];
+        try {
+            //取两个数组的交集
+            $fields = array_intersect($fields, $allowed);
+            //如果传入的数组是空数组，则return
+            if (empty($fields)) {return ['code'=>'0','msg'=>'没有合法字段','data'=>''];}
+            //把$fields数组里的元素用逗号连接
+            $cols = implode(',', $fields);
+            $sql = "SELECT {$cols} FROM video WHERE title LIKE :title";
+            //预处理
+            $statement = $pdo->prepare($sql);
+            //绑定值
+            $statement->bindValue(':title', '%'.$title.'%');
+            //执行sql
+            $statement->execute();
+            $rows = $statement->fetchAll();
+            return ['code'=>'1','msg'=>'成功','data'=> $rows];
+        }catch (\PDOException $e) {
+            $rdata=['sql'=>$sql,'error'=>$e->getMessage(),'sqlstate'=>$e->getCode(),'params'=>$fields];
             return ['code'=>'0','msg'=>'sql执行失败','data'=>$rdata];
         }
     }

@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     $ids=json_decode($redis->get('music'), true);
     if($index >= count($ids)){
-        $index=random_int(0, count($ids)-10);
+        $index=random_int(0, count($ids)-15);
     }
     if($ids === null){
         $response = array('status' => 0,'message' =>'redis中没有music的id数据');
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 
-    $music_list_ids=array_slice($ids,$index,10);
+    $music_list_ids=array_slice($ids,$index,15);
     $musics=[];
     for($i=0;$i<count($music_list_ids);$i++){
         $r=$db->select_data_by_id_music($pdo,$music_list_ids[$i],['id','name','title','artist']);
