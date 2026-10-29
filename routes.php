@@ -20,6 +20,7 @@ $router->define([
     '/video/get_video_list' => 'controllers/video/get_video_list.php',
     '/video/toggle_favorites' => 'controllers/video/toggle_favorites_video.php',
     '/video/search_video' => 'controllers/video/search_video.php',
+    '/video/get_collect' => 'controllers/video/get_video_collect_list.php',
 
     
     '/test' => '/test.php',

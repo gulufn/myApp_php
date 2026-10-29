@@ -704,6 +704,58 @@ class Db
 
 
     ///////////////////////////////////////////////////////////user_video_favorites表
+    /**
+     * 查询用户收藏的视频，按时间倒序，取前x个
+     *
+     * @param  \PDO   $pdo
+     * @param  int    $user_id
+     * @return array  $rdata
+     */
+    public static function select_data_by_userid_userVideoFavorites(\PDO $pdo,$user_id): array {
+        try {
+            $sql = "SELECT id,video_id,created_at FROM user_video_favorites WHERE user_id = :user_id ORDER BY created_at DESC LIMIT 12";
+            // 预处理
+            $statement = $pdo->prepare($sql);
+            // 绑定值
+            $statement->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+            // 执行 sql
+            $statement->execute();
+            $rows = $statement->fetchall();
+
+            // $rdata = ['sql' => $sql, 'data' =>$rows];
+            return ['code' => '1', 'msg' => 'sql执行成功', 'data' => $rows];
+        } catch (\PDOException $e) {
+            $rdata = ['sql' => $sql, 'error' => $e->getMessage(), 'sqlstate' => $e->getCode()];
+            return ['code' => '0', 'msg' => 'sql执行失败', 'data' => $rdata];
+        }
+    }
+    /**
+     * 通过userid和游标 查询用户收藏的视频，按时间倒序，取前x个
+     *
+     * @param  \PDO   $pdo
+     * @param  int    $user_id
+     * @param  string $youbiao
+     * @return array  $rdata
+     */
+    public static function select_data_by_userid_youbiao_userVideoFavorites(\PDO $pdo,$user_id,$youbiao): array {
+        try {
+            $sql = "SELECT id,video_id,created_at FROM user_video_favorites WHERE user_id = :user_id  AND created_at < :youbiao ORDER BY created_at DESC LIMIT 8";
+            // 预处理
+            $statement = $pdo->prepare($sql);
+            // 绑定值
+            $statement->bindValue(':user_id', $user_id, \PDO::PARAM_INT);
+            $statement->bindValue(':youbiao', $youbiao, \PDO::PARAM_STR);
+            // 执行 sql
+            $statement->execute();
+            $rows = $statement->fetchall();
+
+            $rdata = ['sql' => $sql, 'data' =>$rows];
+            return ['code' => '1', 'msg' => 'sql执行成功', 'data' => $rdata];
+        } catch (\PDOException $e) {
+            $rdata = ['sql' => $sql, 'error' => $e->getMessage(), 'sqlstate' => $e->getCode()];
+            return ['code' => '0', 'msg' => 'sql执行失败', 'data' => $rdata];
+        }
+    }
 
     /**
      * 判断用户是否收藏了某个视频

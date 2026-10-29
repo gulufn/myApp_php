@@ -24,8 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     // $r=$db->select_data_by_userid_videoid_userVideoFavorites($pdo,46,16);
     // $r=$db->delete_data_userVideoFavorites($pdo,46,15);
     // $r=$db->select_data_by_title_video($pdo,'秦时',['id','name', 'title', 'form', 'status']);
-    $r=$db->select_data_by_userid_userMusicFavorites($pdo,46);
-    // $r=$db->select_data_by_userid_youbiao_userMusicFavorites($pdo,46,'2026-10-28 20:37:58');
+    // $r=$db->select_data_by_userid_userVideoFavorites($pdo,46);
+    $r=$db->select_data_by_userid_youbiao_userVideoFavorites($pdo,46,'2026-10-29 11:40:54');
+
     var_dump($r);
 
 
